@@ -1,12 +1,5 @@
 <?php
 
-/**
- * Database Initialization Script
- * 
- * This script creates the necessary database and tables for the application.
- * Run this script once to set up the database structure.
- */
-
 // Check if running in browser or CLI
 $isBrowser = php_sapi_name() !== 'cli';
 if ($isBrowser) {

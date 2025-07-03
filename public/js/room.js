@@ -27,7 +27,8 @@ function connectSSE() {
     evtSource.close();
   }
 
-  evtSource = new EventSource(basePath + "/sse");
+  const formattedBasePath = basePath.replace(/\/+$/, '');
+  evtSource = new EventSource(formattedBasePath + "/sse");
 
   evtSource.onopen = function () {
     console.log("SSE connection established");
@@ -446,7 +447,11 @@ async function analyzeAudioBlob(blob, sampleRate, commandType) {
 }
 
 function sendMicResults(results) {
-  fetch(basePath + "/api/mic_results.php", {
+  // Ensure basePath is properly formatted (no trailing slash)
+  const formattedBasePath = basePath.replace(/\/+$/, '');
+  const apiUrl = formattedBasePath + '/api/mic_results.php';
+  
+  fetch(apiUrl, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -468,7 +473,7 @@ function sendMicResults(results) {
 
 document.addEventListener('DOMContentLoaded', function () {
   // Transfer Points AJAX handler
-  const transferForm = document.querySelector('form[action="transfer_points.php"]');
+  const transferForm = document.getElementById('transferPointsForm');
   if (transferForm) {
     transferForm.addEventListener('submit', function (e) {
       e.preventDefault();
@@ -483,7 +488,9 @@ document.addEventListener('DOMContentLoaded', function () {
         return;
       }
       transferForm.querySelector('button[type="submit"]').disabled = true;
-      fetch('../api/transfer_points.php', {
+      // Ensure basePath is properly formatted (no trailing slash)
+      const formattedBasePath = basePath.replace(/\/+$/, '');
+      fetch(formattedBasePath + '/api/transfer_points.php', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

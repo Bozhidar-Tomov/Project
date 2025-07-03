@@ -9,6 +9,7 @@ $countdown = '';
 $audienceIntensity = '';
 $audienceVolume = '';
 $responders = '';
+$basePath = defined('BASE_PATH') ? BASE_PATH : '';
 ?>
 
 <main class="room-main" aria-label="Room View">
@@ -49,7 +50,7 @@ $responders = '';
         </section>
         <section class="panel" aria-label="Transfer Points">
             <h2 class="panel-title">💸 Transfer Points</h2>
-            <form class="form-fields" action="<?= $basePath ?>/api/transfer_points.php" method="POST" autocomplete="off">
+            <form class="form-fields" id="transferPointsForm" action="<?= $basePath ?>/api/transfer_points.php" method="POST" autocomplete="off">
                 <label for="recipient">Recipient Username:</label>
                 <input type="text" id="recipient" name="recipient" required>
                 <label for="amount">Points:</label>
@@ -70,6 +71,6 @@ $responders = '';
 
 <script>
     window.userId = "<?= $_SESSION['user']['id'] ?? '' ?>";
-    window.basePath = "<?= defined('BASE_PATH') ? BASE_PATH : '' ?>";
+    window.basePath = "<?= $basePath ?>";
 </script>
-<script src="<?= defined('BASE_PATH') ? BASE_PATH : '' ?>/js/room.js"></script>
+<script src="<?= $basePath ?>/js/room.js"></script>
