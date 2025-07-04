@@ -595,11 +595,23 @@ async function analyzeAudioBlob(blob, sampleRate, commandType) {
         reactionAccuracy = Math.max(0, 100 - Math.round(rms * 1000)); // e.g., rms 0.05 -> 50% accuracy
       }
     } else {
-      // Reaction accuracy: how soon after recording started did the sound start?
+      // Reaction accuracy: evaluate based on response speed (time between recording start and first detected sound)
       if (startIdx !== -1) {
         const startSec = startIdx / sampleRate;
-        reactionAccuracy = Math.max(0, 1 - startSec / duration); // 1 = instant, 0 = very late
-        reactionAccuracy = Math.round(reactionAccuracy * 100);
+
+        // Define response time thresholds (in seconds)
+        const FAST_THRESHOLD = 0.2;   // <= 200 ms ➜ perfect score
+        const SLOW_THRESHOLD = 1.5;   // >= 1.5 s ➜ zero score
+
+        if (startSec <= FAST_THRESHOLD) {
+          reactionAccuracy = 100; // Perfect
+        } else if (startSec >= SLOW_THRESHOLD) {
+          reactionAccuracy = 0;   // Too slow
+        } else {
+          // Linearly scale accuracy between thresholds
+          const proportion = (SLOW_THRESHOLD - startSec) / (SLOW_THRESHOLD - FAST_THRESHOLD);
+          reactionAccuracy = Math.round(proportion * 100);
+        }
       }
     }
     
@@ -626,13 +638,23 @@ async function analyzeAudioBlob(blob, sampleRate, commandType) {
 /**
  * Updates audience metrics (intensity & volume) in the Room view.
  */
-function updateAudienceMetrics({ intensity, volume }) {
+function updateAudienceMetrics({ intensity, volume, reactionAccuracy }) {
   const intensityEl = document.getElementById('audienceIntensity');
   const volumeEl = document.getElementById('audienceVolume');
+  const reactionAccuracyEl = document.getElementById('reactionAccuracy');
 
   if (intensityEl && typeof intensity !== 'undefined') {
     intensityEl.textContent = intensity;
     const container = intensityEl.closest('.audience-metric');
+    if (container) {
+      container.classList.add('metric-updated');
+      setTimeout(() => container.classList.remove('metric-updated'), 800);
+    }
+  }
+
+  if (reactionAccuracyEl && typeof reactionAccuracy !== 'undefined') {
+    reactionAccuracyEl.textContent = reactionAccuracy;
+    const container = reactionAccuracyEl.closest('.audience-metric');
     if (container) {
       container.classList.add('metric-updated');
       setTimeout(() => container.classList.remove('metric-updated'), 800);
