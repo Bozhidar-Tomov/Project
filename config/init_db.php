@@ -34,36 +34,19 @@ function output($message, $type = 'info') {
     }
 }
 
-// Database configuration
-$host = 'localhost';
-$username = 'root';
-$password = '';
-$charset = 'utf8mb4';
-$collation = 'utf8mb4_unicode_ci';
-$dbName = 'audience_reaction_app';
+// Load database configuration
+$config = require_once __DIR__ . '/database.php';
 
 try {
     // Connect to MySQL server without selecting a database
     $pdo = new PDO(
-        "mysql:host=$host;charset=$charset",
-`        $username,
-        $password,
-        [
-            PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-            PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
-            PDO::ATTR_EMULATE_PREPARES => false,
-        ]
+        "mysql:host={$config['host']};charset={$config['charset']}",
+        $config['username'],
+        $config['password'],
+        $config['options']
     );
     
     output("Connected to MySQL server successfully.", 'success');
-    
-    // Create database if it doesn't exist
-    $pdo->exec("CREATE DATABASE IF NOT EXISTS `$dbName` CHARACTER SET $charset COLLATE $collation");
-    output("Database '$dbName' created or already exists.", 'success');
-    
-    // Select the database
-    $pdo->exec("USE `$dbName`");
-    output("Using database '$dbName'.", 'success');
     
     // Execute SQL schema
     $sql = file_get_contents(__DIR__ . '/schema.sql');
