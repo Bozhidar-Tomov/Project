@@ -4,6 +4,7 @@ $points = $points ?? 0;
 $role = $role ?? 'Participant';
 $categoriesStr = $categoriesStr ?? 'None';
 $reactionAccuracy = $reactionAccuracy ?? 0;
+$gender = $gender ?? '';
 $currentCommand = 'Awaiting next command...';
 $countdown = '';
 $audienceIntensity = '';
@@ -39,6 +40,7 @@ $basePath = defined('BASE_PATH') ? BASE_PATH : '';
             </div>
             <ul class="user-info-list">
                 <li><span class="info-label">Points:</span> <span class="info-value"><?= $points ?></span></li>
+<li><span class="info-label">Gender:</span> <span class="info-value"><?= htmlspecialchars($gender) ?></span></li>
                 <li><span class="info-label">Categories:</span> <span class="info-value" id="userCategories"><?= $categoriesStr ?></span></li>
                 <li><span class="info-label">Reaction Accuracy:</span> <span class="info-value" id="reactionAccuracy"><?= $reactionAccuracy ?>%</span></li>
             </ul>

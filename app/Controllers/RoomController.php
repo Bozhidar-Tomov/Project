@@ -25,7 +25,14 @@ class RoomController extends BaseController
             $categories = $users[$user['id']]['categories'];
         }
         
-        // Format categories for display
+        // Remove gender from categories if present
+    $genderVal = $user['gender'] ?? '';
+    if ($genderVal !== '') {
+        $categories = array_values(array_filter($categories, function ($cat) use ($genderVal) {
+            return strcasecmp(trim($cat), trim($genderVal)) !== 0;
+        }));
+    }
+    // Format categories for display
         $categoriesStr = !empty($categories) ? implode(', ', $categories) : 'None';
         
         $roomData = [
